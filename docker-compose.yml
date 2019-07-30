@@ -1,0 +1,26 @@
+version: "3"
+services:
+    # gRPC Server/service
+    grpc_service:
+        build:
+            context: .
+        command: npm start
+        container_name: grpc_service
+        restart: always
+        depends_on:
+            - grpc_mongo
+        environment:
+            - NODE_ENV=dev
+            - URI=mongodb://mongo/snapshots
+        networks:
+            - grpcnet
+        links:
+            - grpc_mongo:mongo
+        ports: 
+            - "5001:5001"
+
+networks:
+    grpcnet:
+
+volumes:
+    db-data:
