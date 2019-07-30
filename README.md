@@ -26,18 +26,12 @@
 
 ## Description
 
-1. [Nest](https://github.com/nestjs/nest) Hybrid dockerized node.js TypeScrypt application
+[Nest](https://github.com/nestjs/nest) node.js TypeScrypt application
+gRPC (protobuf v.3 framework) vehicle expoitation saver service
 
-- HTTP1 REST API + HTTP2 gRPC/protobuf v.3 (axis service)
-- HTTP2 gRPC/protobuf v.3 (vehicle snapshot service)
-
-2. MongoDB storage
-3. MongoDB admin console
-4. Node.js gRPC client -> simulate fake snapshots
-
-- use 'vehicle.exploitation.proto' protobuf v.3 file
-- on start adds fake Vehicle with driver and retreives UUID from gRPCS service
-- then call gRPC method addSnapsot using fake snaphots
+- uses 'vehicle.exploitation.proto' protobuf v.3 file
+- uses client token from protobuf metadata for retrieving authorized client UUID from Redis store
+- uses mongoDB 'snaphots' DB and 'snaphots' collection for storing vehicle exploitation snaphots
 
 ## Running the app using docker-composer
 
@@ -48,17 +42,29 @@ $ docker-compose up
 $ docker-compose down
 ```
 
-## Test
+## Running the app
+
+# env params
 
 ```bash
-# unit tests
-$ npm run test
+# set MongoDB URI
+$ export URI='mongodb://<mongo.db.host>/snapshots'
+# set REDIS HOST and PORT
+$ export REDIS_HOST='<redis.host>' && export REDIS_PORT='<redis.port>'
+```
 
-# e2e tests
-$ npm run test:e2e
+# dev mode
 
-# test coverage
-$ npm run test:cov
+```bash
+# run app
+$ npm run start:dev
+```
+
+# prod mode
+
+```bash
+# run app
+$ npm start
 ```
 
 ## License
