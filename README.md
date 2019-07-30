@@ -27,13 +27,13 @@
 ## Description
 
 [Nest](https://github.com/nestjs/nest) node.js TypeScrypt application
-gRPC (protobuf v.3 framework) vehicle expoitation saver service
+gRPC/REST API (protobuf v.3 framework) vehicle expoitation saver service
 
 - uses 'vehicle.exploitation.proto' protobuf v.3 file
 - uses client token from protobuf metadata for retrieving authorized client UUID from Redis store
 - uses mongoDB 'snaphots' DB and 'snaphots' collection for storing vehicle exploitation snaphots
 
-## Running the app using docker-composer
+# Running the app using docker-composer
 
 ```bash
 # run app
@@ -42,9 +42,21 @@ $ docker-compose up
 $ docker-compose down
 ```
 
-## Running the app
+# Running the app
 
-# env params
+to run gRPC API use
+
+```bash
+$ export api=grpc && npm start
+```
+
+to run HTTP API on port 3001 use
+
+```bash
+$ export api=rest && export http_port=3001 && npm start
+```
+
+## env params
 
 ```bash
 # set MongoDB URI
@@ -53,14 +65,14 @@ $ export URI='mongodb://<mongo.db.host>/snapshots'
 $ export REDIS_HOST='<redis.host>' && export REDIS_PORT='<redis.port>'
 ```
 
-# dev mode
+## dev mode
 
 ```bash
 # run app
 $ npm run start:dev
 ```
 
-# prod mode
+## prod mode
 
 ```bash
 # run app
@@ -70,3 +82,7 @@ $ npm start
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+```
+
+```

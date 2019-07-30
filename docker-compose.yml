@@ -18,6 +18,7 @@ services:
             - grpc_mongo:mongo
         ports: 
             - "5001:5001"
+            - "3000:3000"
 
 networks:
     grpcnet:
