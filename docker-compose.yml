@@ -56,7 +56,6 @@ services:
         restart: always
         depends_on: 
             - wayjournal_grpc_api_axis
-            - wayjournal_test_pg_db
             - wayjournal_test_redis
         environment: 
             - grpc_url=grpc:5001

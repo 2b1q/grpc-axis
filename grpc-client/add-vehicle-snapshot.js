@@ -42,7 +42,8 @@ new Promise(resolve =>
           return resolve();
         }
         console.log("Redis sucessfully added key", reply);
-        resolve();
+        // wait 30 sec for nest bootstraping
+        setTimeout(() => resolve(), 30000);
       }
     )
 ).then(() => {
