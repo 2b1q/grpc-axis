@@ -26,6 +26,7 @@
     "faker": "^4.1.0",
     "grpc": "^1.22.2",
     "random-birthday": "^1.0.1",
+    "redis": "^2.8.0",
     "vin-generator": "^1.0.1"
   }
 }

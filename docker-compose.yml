@@ -23,22 +23,6 @@ services:
         ports: 
             - "5001:5001"
 
-    # gRPC client (send fake data to gRPC service)
-    # grpc_client:
-    #     build: 
-    #         context: ./grpc-client
-    #     command: node add-vehicle-snapshot.js
-    #     container_name: grpc_client
-    #     restart: always
-    #     depends_on: 
-    #         - wayjournal_grpc_api_axis
-    #     environment: 
-    #         - grpc_url=grpc_saver:5001
-    #     networks: 
-    #         - wayjournal-net
-    #     links: 
-    #         - wayjournal_grpc_api_axis:grpc_saver
-
     # axis REST API 
     wayjournal_rest_api_axis:
         build:
@@ -63,6 +47,27 @@ services:
         ports: 
             - "3000:3000"
 
+    # gRPC client (send fake data to gRPC service)
+    wayjournal_grpc_client:
+        build: 
+            context: grpc-client
+        command: node add-vehicle-snapshot.js
+        container_name: wayjournal_grpc_client
+        restart: always
+        depends_on: 
+            - wayjournal_grpc_api_axis
+            - wayjournal_test_pg_db
+            - wayjournal_test_redis
+        environment: 
+            - grpc_url=grpc:5001
+            - REDIS_HOST=redis
+            - REDIS_PORT=6379
+        networks: 
+            - wayjournal-net
+        links: 
+            - wayjournal_grpc_api_axis:grpc
+            - wayjournal_test_redis:redis
+
     wayjournal_test_pg_db:
         # image: postgres
         build: 
@@ -83,6 +88,7 @@ services:
 
     wayjournal_test_adminer:
         image: adminer
+        container_name: wayjournal_test_adminer
         depends_on:
             - wayjournal_test_pg_db
         restart: always
