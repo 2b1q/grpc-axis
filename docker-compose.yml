@@ -1,27 +1,139 @@
-version: "3"
+version: '3.1'
 services:
-    # gRPC Server/service
-    grpc_service:
+    # gRPC Server/service (axis saver)
+    wayjournal_grpc_api_axis:
         build:
             context: .
         command: npm start
-        container_name: grpc_service
+        container_name: wj_grpc_api_axis_saver
         restart: always
         depends_on:
-            - grpc_mongo
+            - wayjournal_test_mongo
+            - wayjournal_test_redis
         environment:
             - NODE_ENV=dev
+            - REDIS_HOST=redis
+            - REDIS_PORT=6379
             - URI=mongodb://mongo/snapshots
         networks:
-            - grpcnet
+            - wayjournal-net
         links:
-            - grpc_mongo:mongo
+            - wayjournal_test_mongo:mongo
+            - wayjournal_test_redis:redis
         ports: 
             - "5001:5001"
+
+    # gRPC client (send fake data to gRPC service)
+    # grpc_client:
+    #     build: 
+    #         context: ./grpc-client
+    #     command: node add-vehicle-snapshot.js
+    #     container_name: grpc_client
+    #     restart: always
+    #     depends_on: 
+    #         - wayjournal_grpc_api_axis
+    #     environment: 
+    #         - grpc_url=grpc_saver:5001
+    #     networks: 
+    #         - wayjournal-net
+    #     links: 
+    #         - wayjournal_grpc_api_axis:grpc_saver
+
+    # axis REST API 
+    wayjournal_rest_api_axis:
+        build:
+            context: .
+        command: npm start
+        container_name: wj_rest_api_axis_saver
+        restart: always
+        depends_on:
+            - wayjournal_test_mongo
+            - wayjournal_test_redis
+        environment:
+            - NODE_ENV=dev
+            - api=rest
+            - REDIS_HOST=redis
+            - REDIS_PORT=6379
+            - URI=mongodb://mongo/snapshots
+        networks:
+            - wayjournal-net
+        links:
+            - wayjournal_test_mongo:mongo
+            - wayjournal_test_redis:redis
+        ports: 
             - "3000:3000"
 
+    wayjournal_test_pg_db:
+        # image: postgres
+        build: 
+            context: db
+        container_name: wayjournal_test_pg_db
+        restart: always
+        # volumes:
+        #     - ./postgres-data:/var/lib/postgresql/data
+        networks:
+            - wayjournal-net
+        ports:
+            - "5432:5432"
+        environment:
+        # POSTGRES_PASSWORD: example
+            - POSTGRES_USER=wayjournal
+            - POSTGRES_PASSWORD=wayjournal
+            - POSTGRES_DB=wayjournal
+
+    wayjournal_test_adminer:
+        image: adminer
+        depends_on:
+            - wayjournal_test_pg_db
+        restart: always
+        links:
+            - wayjournal_test_pg_db:db
+        networks:
+            - wayjournal-net
+        ports:
+            - 8080:8080
+
+    wayjournal_test_mongo:
+        image: mongo:latest
+        container_name: wayjournal_test_mongo
+        restart: always
+        volumes:
+            - db-data:/data/db
+        networks:
+            - wayjournal-net
+        ports:
+            - "27017:27017"
+        # environment:
+        #   MONGO_INITDB_ROOT_USERNAME: root
+        #   MONGO_INITDB_ROOT_PASSWORD: toor
+
+    wayjournal_test_express:
+        image: mongo-express
+        container_name: wayjournal_test_express
+        depends_on:
+            - wayjournal_test_mongo
+        links:
+            - wayjournal_test_mongo:mongo
+        networks:
+            - wayjournal-net
+        restart: always
+        ports:
+            - "8081:8081"
+        # environment:
+        #     ME_CONFIG_MONGODB_ADMINUSERNAME: root
+        #     ME_CONFIG_MONGODB_ADMINPASSWORD: toor
+
+    wayjournal_test_redis:
+        image: redis
+        container_name: wayjournal_test_redis
+        restart: always
+        networks:
+            - wayjournal-net
+        ports:
+            - "6379:6379"
+
 networks:
-    grpcnet:
+  wayjournal-net:
 
 volumes:
-    db-data:
+  db-data:

@@ -47,19 +47,19 @@ export class AuthGuard implements CanActivate {
     // get UUID from Redis
     let clientUuid: string | undefined;
     // get client UUID from Redis using auth token
-    try {
-      const client = await this.redisService.getClient();
-      clientUuid = await client.get(tokenKey);
-    } catch (error) {
-      Logger.error(error, null, 'Auth Guard');
-    }
+    // try {
+    //   const client = await this.redisService.getClient();
+    //   clientUuid = await client.get(tokenKey);
+    // } catch (error) {
+    //   Logger.error(error, null, 'Auth Guard');
+    // }
     // check if client already authorized in Redis
-    if (!clientUuid) {
-      throw new HttpException(
-        'Token validation failed. Client not found',
-        HttpStatus.FORBIDDEN,
-      );
-    }
+    // if (!clientUuid) {
+    //   throw new HttpException(
+    //     'Token validation failed. Client not found',
+    //     HttpStatus.FORBIDDEN,
+    //   );
+    // }
     return clientUuid;
   }
 }
